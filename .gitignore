@@ -6,3 +6,6 @@
 # Maven
 log/
 target/
+
+# Dataset
+src/main/resources/fulldocs-new.trec
