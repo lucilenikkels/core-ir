@@ -1,0 +1,11 @@
+<parameters>
+	<indexCount>0</indexCount>
+	<indexes></indexes>
+	<stopper>
+		<word>a</word>
+		<word>an</word>
+		<word>the</word>
+		<word>of</word>
+	</stopper>
+</parameters>
+
