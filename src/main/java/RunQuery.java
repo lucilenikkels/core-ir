@@ -20,7 +20,7 @@ public class RunQuery {
 		// smoothing to weight terms
 		env.setStopwords(BuildIndex.getStopWords());
 		System.out.println("Loading indexes...");
-		env.addIndex("/media/veracrypt2/TUDelft/msmarco.idx");
+		env.addIndex("/home/coreir/lm_model/msmarco.idx");
 		System.out.println("Environment loaded, found " + env.documentCount() + " document(s).");
 
 		final Map<String, String[]> theirSelections = DocTestLoader.load();
@@ -37,7 +37,8 @@ public class RunQuery {
 
 			final String[] ourSelection = new String[LIMIT];
 
-			final ScoredExtentResult[] res = env.runQuery(query.getWords(), LIMIT);
+			final ScoredExtentResult[] res = env.runQuery(//
+					"#combine(" + query.getWords() + ")", LIMIT); // #prior(???) 
 			System.out.println("Query count was " + res.length + " looking up documents...");
 
 			final ParsedDocument[] docs = env.documents(res);
@@ -85,7 +86,7 @@ public class RunQuery {
 
 	private static List<Query> loadQueries() throws FileNotFoundException {
 		final List<Query> lines = new ArrayList<>();
-		final File f = new File("/media/veracrypt2/TUDelft/msmarco-test2019-queries.tsv");
+		final File f = new File("/home/coreir/lm_model/msmarco-test2019-queries.tsv");
 		try (Scanner sc = new Scanner(f)) {
 			while (sc.hasNextLine()) {
 				final String line = sc.nextLine();

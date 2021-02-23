@@ -19,8 +19,8 @@ public class BuildIndex {
 			env.setStemmer("porter");
 			env.setStoreDocs(true);
 			env.setStopwords(getStopWords());
-			env.create("/media/veracrypt2/TUDelft/msmarco.idx");
-			env.addFile("/media/veracrypt2/TUDelft/msmarco-docs.trec", "trectext");
+			env.create("/home/coreir/lm_model/msmarco.idx");
+			env.addFile("/home/coreir/lm_model/msmarco-docs.trec", "trectext");
 			env.close();
 		} catch (Exception e) {
 			e.printStackTrace();

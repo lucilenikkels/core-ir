@@ -9,7 +9,7 @@ public class DocTestLoader {
 	public static Map<String, String[]> load() throws FileNotFoundException {
 		System.out.println("Loading doctest file...");
 		final Map<String, String[]> queryToDocuments = new HashMap<>();
-		final File f = new File("/media/veracrypt2/TUDelft//msmarco-doctest2019-top100");
+		final File f = new File("/home/coreir/lm_model/msmarco-doctest2019-top100");
 		try (Scanner sc = new Scanner(f)) {
 			while (sc.hasNextLine()) {
 				final String line = sc.nextLine();
