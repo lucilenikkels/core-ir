@@ -38,7 +38,7 @@ public class RunQuery {
 			final String[] ourSelection = new String[LIMIT];
 
 			final ScoredExtentResult[] res = env.runQuery(//
-					"#combine(" + query.getWords() + ")", LIMIT); // #prior(???) 
+					"#combine(#prior(doclength) " + query.getWords() + ")", LIMIT); // 
 			System.out.println("Query count was " + res.length + " looking up documents...");
 
 			final ParsedDocument[] docs = env.documents(res);
