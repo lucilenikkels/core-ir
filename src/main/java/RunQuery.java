@@ -1,10 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.PrintWriter;
+import java.util.*;
 
 import lemurproject.indri.ParsedDocument;
 import lemurproject.indri.QueryEnvironment;
@@ -27,38 +24,45 @@ public class RunQuery {
 
 		// now we traverse all queries individually from msmarco-test2019-queries.tsv
 		final List<Query> queries = loadQueries();
-		for (Query query : queries) {
-			System.out.println();
-			System.out.println("Processing query [" + query.getId() + "] \"" + query.getWords() + "\"");
+		int len = queries.size();
+		String outFile = "result" + new Date().getTime() + ".out";
 
-			final String[] theirSelection = theirSelections.get(query.getId());
-			if (theirSelection.length != LIMIT)
-				throw new IllegalArgumentException("Their selection did not have " + LIMIT + " sample(s)");
+		try (PrintWriter writeRes = new PrintWriter(new File(outFile))) {
+			for (Query query : queries) {
+				System.out.println("Processing query "+ queries.indexOf(query)+"/"+len);
+				//System.out.println("Processing query [" + query.getId() + "] \"" + query.getWords() + "\"");
 
-			final String[] ourSelection = new String[LIMIT];
+				final String[] theirSelection = theirSelections.get(query.getId());
+				if (theirSelection.length != LIMIT)
+					throw new IllegalArgumentException("Their selection did not have " + LIMIT + " sample(s)");
 
-			final ScoredExtentResult[] res = env.runQuery(//
-					"#combine(#prior(doclength) " + query.getWords() + ")", LIMIT); // 
-			System.out.println("Query count was " + res.length + " looking up documents...");
+				final String[] ourSelection = new String[LIMIT];
 
-			final ParsedDocument[] docs = env.documents(res);
+				/*final ScoredExtentResult[] res = env.runQuery(
+					"#combine(#prior(doclength) " + query.getWords() + ")", LIMIT); */
+				final ScoredExtentResult[] res = env.runQuery(
+						"#combine(" + query.getWords() + ")", LIMIT);
 
-			for (int i = 0; i < res.length; i++) {
-				// final ScoredExtentResult score = res[i];
-				// final double logProbability = score.score;
-				/*
-				 * Indri returns the log of the actual probability value. log(0) equals negative
-				 * infinity, and log(1) equals zero, so Indri document scores are always
-				 * negative.
-				 */
-				// final double actualProbability = Math.pow(Math.E, score.score);
-				final ParsedDocument doc = docs[i];
-				final String documentId = parseDocumentId(doc);
-				ourSelection[i] = documentId;
+				final ParsedDocument[] docs = env.documents(res);
+
+				for (int i = 0; i < res.length; i++) {
+					// final ScoredExtentResult score = res[i];
+					// final double logProbability = score.score;
+					/*
+					 * Indri returns the log of the actual probability value. log(0) equals negative
+					 * infinity, and log(1) equals zero, so Indri document scores are always
+					 * negative.
+					 */
+					// final double actualProbability = Math.pow(Math.E, score.score);
+					final ParsedDocument doc = docs[i];
+					final String documentId = parseDocumentId(doc);
+					ourSelection[i] = query.getId() + " Q0 " + documentId + " " + (i+1) + " " + res[i].score + " IndriQueryLikelihood";
+					writeRes.println(ourSelection[i]);
+				}
+
+				// compare the two
+				//compare(Arrays.asList(ourSelection), Arrays.asList(theirSelection));
 			}
-
-			// compare the two
-			compare(Arrays.asList(ourSelection), Arrays.asList(theirSelection));
 		}
 	}
 
