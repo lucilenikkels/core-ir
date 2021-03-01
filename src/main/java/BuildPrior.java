@@ -2,7 +2,10 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import lemurproject.indri.ParsedDocument;
 import lemurproject.indri.QueryEnvironment;
@@ -27,18 +30,30 @@ public class BuildPrior {
 			all.add(i);
 		final List<List<Integer>> batches = partition(all, CHUNK_SIZE);
 
+		final Map<Integer, Integer> docPriors = new HashMap<>();
+		for (int batchId = 0; batchId < batches.size(); batchId++) {
+			final List<Integer> batch = batches.get(batchId);
+			System.out.println("Processing batch " + (batchId + 1) + "/" + batches.size() + "...");
+			final ParsedDocument[] pds = env.documents(toPrimitive(batch));
+			for (int i = 0; i < pds.length; i++) {
+				final int id = batch.get(i);
+				final ParsedDocument doc = pds[i];
+				// calculate the prior, must be integer because summing millions of doubles will round incorrectly
+				final int prior = calculatePrior(doc);
+				docPriors.put(id, prior);
+			}
+		}
+
+		long totalPrior = 0;
+		for (int val : docPriors.values())
+			totalPrior += val;
+
 		try (PrintWriter writerPrior = new PrintWriter(new File("./prior_values.dat"))) {
-			for (int batchId = 0; batchId < batches.size(); batchId++) {
-				final List<Integer> batch = batches.get(batchId);
-				System.out.println("Processing batch " + (batchId + 1) + "/" + batches.size() + "...");
-				final ParsedDocument[] pds = env.documents(toPrimitive(batch));
-				for (int i = 0; i < pds.length; i++) {
-					final int id = batch.get(i);
-					final ParsedDocument doc = pds[i];
-					// calculate the prior
-					final double prior = calculatePrior(doc);
-					writerPrior.println(id + " " + Math.log(prior));
-				}
+			for (Entry<Integer, Integer> en : docPriors.entrySet()) {
+				final int doc = en.getKey();
+				double prior = en.getValue();
+				prior /= totalPrior; // what fraction of the entire total
+				writerPrior.println(doc + " " + Math.log(prior));
 			}
 		}
 
@@ -47,7 +62,7 @@ public class BuildPrior {
 		}
 	}
 
-	private static double calculatePrior(ParsedDocument doc) {
+	private static int calculatePrior(ParsedDocument doc) {
 		// simple prior, document length
 		return doc.content.length();
 	}
