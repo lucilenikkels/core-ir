@@ -76,14 +76,14 @@ public class BuildPrior {
 		return doc.content.length();
 	}
 
-	private static int[] toPrimitive(List<Integer> batch) {
+	public static int[] toPrimitive(List<Integer> batch) {
 		final int[] res = new int[batch.size()];
 		for (int i = 0; i < res.length; i++)
 			res[i] = batch.get(i);
 		return res;
 	}
 
-	private static List<List<Integer>> partition(Collection<Integer> members, int maxSize) {
+	public static List<List<Integer>> partition(Collection<Integer> members, int maxSize) {
 		final List<List<Integer>> res = new ArrayList<>();
 		List<Integer> internal = new ArrayList<>();
 

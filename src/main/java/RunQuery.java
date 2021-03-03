@@ -29,6 +29,9 @@ public class RunQuery {
 		env.addIndex("/home/coreir/lm_model/msmarco.idx");
 		System.out.println("Environment loaded, found " + env.documentCount() + " document(s).");
 
+		System.out.println("Loading ids for documents...");
+		final Map<Integer, String> docs = BuildDocumentIdMap.load();
+
 		final Map<String, String[]> theirSelections = DocTestLoader.load();
 
 		// build output files
@@ -62,7 +65,7 @@ public class RunQuery {
 						"#combine(" + prior + query.getWords() + ")", LIMIT); // 
 				// System.out.println("Query count was " + res.length + " looking up documents...");
 
-				final ParsedDocument[] docs = env.documents(res);
+				// final ParsedDocument[] docs = env.documents(res);
 
 				for (int i = 0; i < res.length; i++) {
 					final ScoredExtentResult score = res[i];
@@ -73,8 +76,8 @@ public class RunQuery {
 					 * negative.
 					 */
 					// final double actualProbability = Math.pow(Math.E, score.score);
-					final ParsedDocument doc = docs[i];
-					final String documentId = parseDocumentId(doc); // + "_" + logProbability;
+					// final ParsedDocument doc = docs[i];
+					final String documentId = docs.get(score.document); // parseDocumentId(doc); // + "_" + logProbability;
 					ourSelection[i] = documentId;
 
 					final String line = query.getId() + " Q0 " + documentId + " " + (i + 1) + " " + logProbability
