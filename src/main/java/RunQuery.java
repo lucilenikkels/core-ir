@@ -13,6 +13,10 @@ import lemurproject.indri.ScoredExtentResult;
 public class RunQuery {
 
 	private static final int LIMIT = 100;
+	private static final String[] PRIORS = new String[] { //
+			"", //
+			"#prior(doclength) ", //
+	};
 
 	public static void main(String[] args) throws Exception {
 		final QueryEnvironment env = new QueryEnvironment();
@@ -35,36 +39,42 @@ public class RunQuery {
 			if (theirSelection.length != LIMIT)
 				throw new IllegalArgumentException("Their selection did not have " + LIMIT + " sample(s)");
 
-			final String[] ourSelection = new String[LIMIT];
+			// System.out.println("THEIR " + Arrays.toString(theirSelection));
 
-			final ScoredExtentResult[] res = env.runQuery(//
-					"#combine(#prior(doclength) " + query.getWords() + ")", LIMIT); // 
-			System.out.println("Query count was " + res.length + " looking up documents...");
+			for (String prior : PRIORS) {
+				final String[] ourSelection = new String[LIMIT];
+				final ScoredExtentResult[] res = env.runQuery(//
+						"#combine(" + prior + query.getWords() + ")", LIMIT); // 
+				// System.out.println("Query count was " + res.length + " looking up documents...");
 
-			final ParsedDocument[] docs = env.documents(res);
+				final ParsedDocument[] docs = env.documents(res);
 
-			for (int i = 0; i < res.length; i++) {
-				// final ScoredExtentResult score = res[i];
-				// final double logProbability = score.score;
-				/*
-				 * Indri returns the log of the actual probability value. log(0) equals negative
-				 * infinity, and log(1) equals zero, so Indri document scores are always
-				 * negative.
-				 */
-				// final double actualProbability = Math.pow(Math.E, score.score);
-				final ParsedDocument doc = docs[i];
-				final String documentId = parseDocumentId(doc);
-				ourSelection[i] = documentId;
+				for (int i = 0; i < res.length; i++) {
+					final ScoredExtentResult score = res[i];
+					final double logProbability = score.score;
+					/*
+					 * Indri returns the log of the actual probability value. log(0) equals negative
+					 * infinity, and log(1) equals zero, so Indri document scores are always
+					 * negative.
+					 */
+					// final double actualProbability = Math.pow(Math.E, score.score);
+					final ParsedDocument doc = docs[i];
+					final String documentId = parseDocumentId(doc); // + "_" + logProbability;
+					ourSelection[i] = documentId;
+				}
+
+				// compare the two
+				// System.out.println("OUR [" + prior + "] " + Arrays.toString(ourSelection));
+				final double acc = compare(Arrays.asList(ourSelection), Arrays.asList(theirSelection));
+				System.out.println("PRIOR [" + prior + "] ACCURACY [" + acc + "]");
 			}
-
-			// compare the two
-			compare(Arrays.asList(ourSelection), Arrays.asList(theirSelection));
 		}
 	}
 
 	// NDCG@10 we should get around 0.5
 	// TODO implement better check
-	private static void compare(List<String> our, List<String> their) {
+	private static double compare(List<String> our, List<String> their) {
+
 		int correct = 0;
 		for (String s : their) {
 			// System.out.println("Check " + s + " was in " + our.subList(0, 8));
@@ -73,15 +83,16 @@ public class RunQuery {
 				correct++;
 			}
 		}
-		System.out.println("Accuracy match " + (correct * 100 / their.size()) + "%");
+		final double acc = (correct * 100.0 / their.size());
+		// System.out.println("Accuracy match " + acc + "%");
+		return acc;
 	}
 
-	private static String parseDocumentId(ParsedDocument d) {
-		String value = new String((byte[]) d.metadata.get("docno"));
-		value = value.substring(0, value.length() - 1);
-		// System.out.println("Len " + value.length());
-		// System.out.println("Document ID \"" + value + ".");
-		return value;
+	public static String parseDocumentId(ParsedDocument d) {
+		final String id = new String((byte[]) d.metadata.get("docno")); // new String((byte[]) , StandardCharsets.UTF_8);
+		// System.out.println("id [" + id + "]");
+
+		return id.substring(0, id.length() - 1);
 	}
 
 	private static List<Query> loadQueries() throws FileNotFoundException {
