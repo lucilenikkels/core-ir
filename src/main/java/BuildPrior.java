@@ -30,29 +30,38 @@ public class BuildPrior {
 			all.add(i);
 		final List<List<Integer>> batches = partition(all, CHUNK_SIZE);
 
-		final Map<Integer, Integer> docPriors = new HashMap<>();
+		System.out.println("Finding document lengths...");
+		final Map<String, Double> docPriors = new HashMap<>();
 		for (int batchId = 0; batchId < batches.size(); batchId++) {
 			final List<Integer> batch = batches.get(batchId);
 			System.out.println("Processing batch " + (batchId + 1) + "/" + batches.size() + "...");
 			final ParsedDocument[] pds = env.documents(toPrimitive(batch));
 			for (int i = 0; i < pds.length; i++) {
-				final int id = batch.get(i);
 				final ParsedDocument doc = pds[i];
-				// calculate the prior, must be integer because summing millions of doubles will round incorrectly
-				final int prior = calculatePrior(doc);
-				docPriors.put(id, prior);
+				// final String id = RunQuery.parseDocumentId(doc);
+
+				// System.out.println("Lookup ID " + id + " meta " + doc.metadata);
+				// final int res = env.documentIDsFromMetadata("docno", new String[] { id })[0];
+				// if (res != batch.get(i))
+				// 	throw new RuntimeException(
+				//			"Batch index " + i + " matched to docno " + id + " which matched back to " + res);
+				final double prior = calculatePrior(doc);
+				docPriors.put(Integer.toString(batch.get(i)), prior);
 			}
 		}
 
-		long totalPrior = 0;
-		for (int val : docPriors.values())
-			totalPrior += val;
+		Double highestPrior = null;
+		for (double d : docPriors.values())
+			if (highestPrior == null || d > highestPrior)
+				highestPrior = d;
+		// System.out.println("total " + totalPrior);
 
+		System.out.println("Building prior map...");
 		try (PrintWriter writerPrior = new PrintWriter(new File("./prior_values.dat"))) {
-			for (Entry<Integer, Integer> en : docPriors.entrySet()) {
-				final int doc = en.getKey();
+			for (Entry<String, Double> en : docPriors.entrySet()) {
+				final String doc = en.getKey();
 				double prior = en.getValue();
-				prior /= totalPrior; // what fraction of the entire total
+				prior /= highestPrior; // scale it
 				writerPrior.println(doc + " " + Math.log(prior));
 			}
 		}
@@ -62,7 +71,7 @@ public class BuildPrior {
 		}
 	}
 
-	private static int calculatePrior(ParsedDocument doc) {
+	private static double calculatePrior(ParsedDocument doc) {
 		// simple prior, document length
 		return doc.content.length();
 	}
