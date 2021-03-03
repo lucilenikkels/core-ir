@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -27,7 +29,21 @@ public class RunQuery {
 		env.addIndex("/home/coreir/lm_model/msmarco.idx");
 		System.out.println("Environment loaded, found " + env.documentCount() + " document(s).");
 
+		System.out.println("Loading ids for documents...");
+		final Map<Integer, String> docs = BuildDocumentIdMap.load();
+
 		final Map<String, String[]> theirSelections = DocTestLoader.load();
+
+		// build output files
+		final File resultDir = new File("./results/");
+		resultDir.mkdirs();
+		final PrintWriter[] writers = new PrintWriter[PRIORS.length];
+		for (int i = 0; i < PRIORS.length; i++) {
+			final String prior = PRIORS[i];
+			final String outFile = "result_" + prior.replaceAll("[^a-zA-Z0-9\\s]", "") + "_" + new Date().getTime()
+					+ ".out";
+			writers[i] = new PrintWriter(new File(resultDir, outFile));
+		}
 
 		// now we traverse all queries individually from msmarco-test2019-queries.tsv
 		final List<Query> queries = loadQueries();
@@ -41,13 +57,15 @@ public class RunQuery {
 
 			// System.out.println("THEIR " + Arrays.toString(theirSelection));
 
-			for (String prior : PRIORS) {
+			for (int priorId = 0; priorId < PRIORS.length; priorId++) {
+				final String prior = PRIORS[priorId];
+
 				final String[] ourSelection = new String[LIMIT];
 				final ScoredExtentResult[] res = env.runQuery(//
 						"#combine(" + prior + query.getWords() + ")", LIMIT); // 
 				// System.out.println("Query count was " + res.length + " looking up documents...");
 
-				final ParsedDocument[] docs = env.documents(res);
+				// final ParsedDocument[] docs = env.documents(res);
 
 				for (int i = 0; i < res.length; i++) {
 					final ScoredExtentResult score = res[i];
@@ -58,9 +76,15 @@ public class RunQuery {
 					 * negative.
 					 */
 					// final double actualProbability = Math.pow(Math.E, score.score);
-					final ParsedDocument doc = docs[i];
-					final String documentId = parseDocumentId(doc); // + "_" + logProbability;
+					// final ParsedDocument doc = docs[i];
+					final String documentId = docs.get(score.document); // parseDocumentId(doc); // + "_" + logProbability;
 					ourSelection[i] = documentId;
+
+					final String line = query.getId() + " Q0 " + documentId + " " + (i + 1) + " " + logProbability
+							+ " IndriQueryLikelihood";
+					final PrintWriter w = writers[priorId];
+					w.println(line);
+					w.flush();
 				}
 
 				// compare the two

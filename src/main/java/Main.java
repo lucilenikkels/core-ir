@@ -11,6 +11,8 @@ public class Main {
 			BuildIndex.main(new String[0]);
 		} else if (action.equalsIgnoreCase("buildprior")) {
 			BuildPrior.main(new String[0]);
+		} else if (action.equalsIgnoreCase("buildids")) {
+			BuildDocumentIdMap.main(new String[0]);
 		} else if (action.equalsIgnoreCase("query")) {
 			RunQuery.main(new String[0]);
 		} else
