@@ -4,7 +4,10 @@ import java.util.*;
 public class FeatureFile {
 
     /**
-     * Features:
+     * output.csv:
+     * 0 or 1, relevance label?
+     * qid
+     * docid
      * 1 f_bm25_atire = 1
      * 2 f_bm25_trec3 = 1
      * 3 f_bm25_trec3_kmax = 1
@@ -34,8 +37,9 @@ public class FeatureFile {
                 while ((line = br.readLine()) != null) {
                     String[] values = line.split(",");
                     w.print(values[0] + " qid:" + values[1]);
-                    for (int i = 2; i < NUM_FEATURES+2; i++) {
-                        w.print(" " + (i-1) + ":" +  values[i]);
+                    // Skip value at i=2 because we don't need the doc id
+                    for (int i = 3; i < NUM_FEATURES+3; i++) {
+                        w.print(" " + (i-2) + ":" +  values[i]);
                     }
                     w.print('\n');
                 }
