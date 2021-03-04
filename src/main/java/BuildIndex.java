@@ -18,7 +18,7 @@ public class BuildIndex {
 			final String[] fields = new String[] { "docno", "url" };
 			env.setMetadataIndexedFields(fields, fields);
 			env.setStemmer("porter");
-			env.setStoreDocs(false);
+			env.setStoreDocs(true);
 			env.setStopwords(getStopWords());
 			System.out.println("Creating file...");
 			env.create("/media/veracrypt2/TUDelft/msmarco_indexed_metadata.idx");

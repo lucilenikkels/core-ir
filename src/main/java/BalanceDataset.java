@@ -11,6 +11,7 @@ public class BalanceDataset {
 
 	private static final Random RANDOM = new Random();
 
+	// DO NOT USE - this changes the order, which toolkits seem to make use of, only for testing!
 	public static void main(String[] args) throws FileNotFoundException {
 		System.out.println("Started...");
 		final List<String> ones = new ArrayList<>();
