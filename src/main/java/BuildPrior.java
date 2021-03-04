@@ -73,6 +73,10 @@ public class BuildPrior {
 
 	private static double calculatePrior(ParsedDocument doc) {
 		// simple prior, document length
+		System.out.println("=== CONTENT [" + doc.content.length() + "] ===");
+		System.out.println(doc.content);
+		System.out.println("=== TEXT [" + doc.text.length() + "] ===");
+		System.out.println(doc.text);
 		return doc.content.length();
 	}
 

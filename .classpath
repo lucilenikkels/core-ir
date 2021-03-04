@@ -28,8 +28,8 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/sander/tudelft/coreIR/core-ir/lib/indri.jar"/>
-	<classpathentry kind="lib" path="/home/sander/tudelft/coreIR/core-ir/lib/RetUI.jar"/>
-	<classpathentry kind="lib" path="/home/sander/tudelft/coreIR/core-ir/lib/IndexUI.jar"/>
+	<classpathentry kind="lib" path="/home/sander/tudelft/coreIR/installation/bin/share/indri/IndexUI.jar"/>
+	<classpathentry kind="lib" path="/home/sander/tudelft/coreIR/installation/bin/share/indri/RetUI.jar"/>
+	<classpathentry kind="lib" path="/home/sander/tudelft/coreIR/installation/bin/share/indri/indri.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

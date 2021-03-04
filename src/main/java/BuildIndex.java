@@ -10,17 +10,19 @@ public class BuildIndex {
 
 	public static void main(String[] args) {
 		try {
-			if (true) {
-				System.out.println("Prevent running by accident and overwrite index");
-				System.exit(0);
-			}
 			System.out.println("Building index... This could take a while...");
 			IndexEnvironment env = new IndexEnvironment();
+			env.setIndexedFields(new String[] { //
+					"mainbody", "heading", "inlink", "body", //
+					"title", "table", "td", "a", "applet", "object", "embed" });
+			final String[] fields = new String[] { "docno", "url" };
+			env.setMetadataIndexedFields(fields, fields);
 			env.setStemmer("porter");
-			env.setStoreDocs(true);
+			env.setStoreDocs(false);
 			env.setStopwords(getStopWords());
-			env.create("/home/coreir/lm_model/msmarco.idx");
-			env.addFile("/home/coreir/lm_model/msmarco-docs.trec", "trectext");
+			System.out.println("Creating file...");
+			env.create("/media/veracrypt2/TUDelft/msmarco_indexed_metadata.idx");
+			env.addFile("/media/veracrypt2/TUDelft/msmarco-docs.trec", "trectext");
 			env.close();
 		} catch (Exception e) {
 			e.printStackTrace();
