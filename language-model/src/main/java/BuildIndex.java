@@ -10,7 +10,7 @@ public class BuildIndex {
 
 	public static void main(String[] args) {
 		try {
-			if (true) {
+			if (false) {
 				System.out.println("Prevent running by accident and overwrite index");
 				System.exit(0);
 			}
@@ -18,9 +18,15 @@ public class BuildIndex {
 			IndexEnvironment env = new IndexEnvironment();
 			env.setStemmer("porter");
 			env.setStoreDocs(true);
+			env.setIndexedFields(new String[] {"mainbody", "heading", "inlink", "body", "title", "table", "td", "a",
+					"applet", "object", "embed"});
 			env.setStopwords(getStopWords());
-			env.create("/home/coreir/lm_model/msmarco.idx");
-			env.addFile("/home/coreir/lm_model/msmarco-docs.trec", "trectext");
+
+			final String[] fields = new String[] { "docno", "url" };
+			env.setMetadataIndexedFields(fields, fields);
+
+			env.create("E:/core-ir/msmarcofull.idx");
+			env.addFile("E:/core-ir/msmarco-docs.trec", "trectext");
 			env.close();
 		} catch (Exception e) {
 			e.printStackTrace();
