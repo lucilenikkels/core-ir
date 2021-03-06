@@ -1,3 +1,6 @@
+package languagemodel;
+import index.BuildIndex;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class BuildPrior {
 			final ParsedDocument[] pds = env.documents(toPrimitive(batch));
 			for (int i = 0; i < pds.length; i++) {
 				final ParsedDocument doc = pds[i];
-				// final String id = RunQuery.parseDocumentId(doc);
+				// final String id = languagemodel.RunQuery.parseDocumentId(doc);
 
 				// System.out.println("Lookup ID " + id + " meta " + doc.metadata);
 				// final int res = env.documentIDsFromMetadata("docno", new String[] { id })[0];

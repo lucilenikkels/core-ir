@@ -1,4 +1,4 @@
-package learning2rank;
+package extractfeatures;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,9 +14,13 @@ public class LabelCombine {
 	public static void main(String[] args) throws FileNotFoundException {
 		// load the label file into memory
 		System.out.println("Loading labels...");
-		final List<String> labels = load("/media/veracrypt2/TUDelft/labels/msmarco-doctrain-qrels.tsv");
+		String labelsFile = args[0];
+		final List<String> labels = load(labelsFile);
 		System.out.println("Loading scores...");
-		final List<String> scores = load("/media/veracrypt2/TUDelft/labels/msmarco-doctrain-top100");
+		String scoresFile = args[1];
+		final List<String> scores = load(scoresFile);
+
+		String output = args[2];
 
 		System.out.println("Mapping scores...");
 		final Map<String, Integer> queryDocToScore = new HashMap<>();
@@ -30,7 +34,7 @@ public class LabelCombine {
 		}
 
 		System.out.println("Building output file...");
-		try (PrintWriter w = new PrintWriter("/media/veracrypt2/TUDelft/labels/run1.txt")) {
+		try (PrintWriter w = new PrintWriter(output)) {
 			for (String s : scores) {
 				final String[] split = s.split(" ");
 				final String queryId = split[0];

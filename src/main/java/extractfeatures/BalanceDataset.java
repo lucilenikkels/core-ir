@@ -1,4 +1,4 @@
-package learning2rank;
+package extractfeatures;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +19,10 @@ public class BalanceDataset {
 		final List<String> ones = new ArrayList<>();
 		final List<String> zeros = new ArrayList<>();
 
-		try (Scanner sc = new Scanner(new File("/media/veracrypt2/TUDelft/features.txt"))) {
+		String input = args[0];
+		String output = args[1];
+
+		try (Scanner sc = new Scanner(new File(input))) {
 			while (sc.hasNextLine()) {
 				final String line = sc.nextLine();
 				if (line.startsWith("1 ")) {
@@ -44,7 +47,7 @@ public class BalanceDataset {
 		combined.addAll(ones);
 		combined.addAll(newZeros);
 		Collections.shuffle(combined);
-		try (PrintWriter w = new PrintWriter(new File("/media/veracrypt2/TUDelft/features_balanced.txt"))) {
+		try (PrintWriter w = new PrintWriter(new File(output))) {
 			for (String line : combined) {
 				w.println(line);
 			}

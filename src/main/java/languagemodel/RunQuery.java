@@ -1,3 +1,6 @@
+package languagemodel;
+import index.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -63,7 +66,7 @@ public class RunQuery {
 				final String[] ourSelection = new String[LIMIT];
 				final ScoredExtentResult[] res = env.runQuery(//
 						"#combine(" + prior + query.getWords() + ")", LIMIT); // 
-				// System.out.println("Query count was " + res.length + " looking up documents...");
+				// System.out.println("languagemodel.Query count was " + res.length + " looking up documents...");
 
 				// final ParsedDocument[] docs = env.documents(res);
 

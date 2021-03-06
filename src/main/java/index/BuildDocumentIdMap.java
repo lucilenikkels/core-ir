@@ -1,3 +1,5 @@
+package index;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -7,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import languagemodel.BuildPrior;
+import languagemodel.RunQuery;
 import lemurproject.indri.ParsedDocument;
 import lemurproject.indri.QueryEnvironment;
 

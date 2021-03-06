@@ -1,4 +1,4 @@
-package learning2rank;
+package extractfeatures;
 /*
 
    Porter stemmer in Java. The original paper is in
@@ -36,9 +36,9 @@ package learning2rank;
 import java.io.*;
 
 /**
- * learning2rank.Stemmer, implementing the Porter Stemming Algorithm
+ * extractfeatures.Stemmer, implementing the Porter Stemming Algorithm
  * <p>
- * The learning2rank.Stemmer class transforms a word into its root form.  The input
+ * The extractfeatures.Stemmer class transforms a word into its root form.  The input
  * word can be provided a character at time (by calling add()), or at once
  * by calling one of the various stem(something) methods.
  */
@@ -497,7 +497,7 @@ class Stemmer {
     }
 
     /**
-     * Stem the word placed into the learning2rank.Stemmer buffer through calls to add().
+     * Stem the word placed into the extractfeatures.Stemmer buffer through calls to add().
      * Returns true if the stemming process resulted in a word different
      * from the input.  You can retrieve the result with
      * getResultLength()/getResultBuffer() or toString().
@@ -516,16 +516,16 @@ class Stemmer {
         i = 0;
     }
 
-    /** Test program for demonstrating the learning2rank.Stemmer.  It reads text from a
+    /** Test program for demonstrating the extractfeatures.Stemmer.  It reads text from a
      * a list of files, stems each word, and writes the result to standard
      * output. Note that the word stemmed is expected to be in lower case:
-     * forcing lower case must be done outside the learning2rank.Stemmer class.
-     * Usage: learning2rank.Stemmer file-name file-name ...
+     * forcing lower case must be done outside the extractfeatures.Stemmer class.
+     * Usage: extractfeatures.Stemmer file-name file-name ...
      */
     /*public static void main(String[] args)
     {
         char[] w = new char[501];
-        learning2rank.Stemmer s = new learning2rank.Stemmer();
+        extractfeatures.Stemmer s = new extractfeatures.Stemmer();
         String arg = "C:/Users/luusn/Documents/Studie/information-retrieval/reranking/msmarco-test2019-queries.tsv";
         String outputArg = "C:/Users/luusn/Documents/Studie/information-retrieval/reranking/psqueriestest.tsv";
         try
@@ -572,11 +572,11 @@ class Stemmer {
     }*/
 
     /**
-     * Test program for demonstrating the learning2rank.Stemmer.  It reads text from a
+     * Test program for demonstrating the extractfeatures.Stemmer.  It reads text from a
      * a list of files, stems each word, and writes the result to standard
      * output. Note that the word stemmed is expected to be in lower case:
-     * forcing lower case must be done outside the learning2rank.Stemmer class.
-     * Usage: learning2rank.Stemmer file-name file-name ...
+     * forcing lower case must be done outside the extractfeatures.Stemmer class.
+     * Usage: extractfeatures.Stemmer file-name file-name ...
      */
     public static void executeStemming(String[] args) {
         char[] w = new char[501];

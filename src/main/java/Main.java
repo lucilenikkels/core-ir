@@ -1,3 +1,14 @@
+import extractfeatures.BalanceDataset;
+import extractfeatures.FeatureFile;
+import extractfeatures.LabelCombine;
+import extractfeatures.PreprocessQuery;
+import index.BuildDocumentIdMap;
+import index.BuildIndex;
+import languagemodel.BuildPrior;
+import languagemodel.RunQuery;
+
+import java.util.Arrays;
+
 public class Main {
 
 	public static void main(String[] args) throws Exception {
@@ -15,6 +26,14 @@ public class Main {
 			BuildDocumentIdMap.main(new String[0]);
 		} else if (action.equalsIgnoreCase("query")) {
 			RunQuery.main(new String[0]);
+		} else if (action.equalsIgnoreCase("preprocessqueries")) {
+			PreprocessQuery.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("csvtofeatures")) {
+			FeatureFile.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("balancefeatures")) {
+			BalanceDataset.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("combinelabels")) {
+			LabelCombine.main(Arrays.copyOfRange(args, 1, args.length));
 		} else
 			System.out.println("Unknown action " + action);
 	}

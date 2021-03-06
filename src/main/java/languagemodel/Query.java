@@ -1,3 +1,4 @@
+package languagemodel;
 
 public class Query {
 
