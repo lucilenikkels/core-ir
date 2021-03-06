@@ -4,6 +4,7 @@
 *.iws
 out/
 lemurproject/
+src/main/java/META-INF/
  
 # Maven
 log/
