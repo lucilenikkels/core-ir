@@ -1,7 +1,6 @@
-import extractfeatures.BalanceDataset;
-import extractfeatures.FeatureFile;
-import extractfeatures.LabelCombine;
-import extractfeatures.PreprocessQuery;
+import evaluate.CombineQueryText;
+import evaluate.QueriesWithQrel;
+import extractfeatures.*;
 import index.BuildDocumentIdMap;
 import index.BuildIndex;
 import languagemodel.BuildPrior;
@@ -12,7 +11,7 @@ import java.util.Arrays;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		if (args.length != 1) {
+		if (args.length < 1) {
 			System.out.println("Use either rebuild, buildprior or query as program argument,"//
 					+ " for example [java -jar tool.jar rebuild]");
 			return;
@@ -34,6 +33,12 @@ public class Main {
 			BalanceDataset.main(Arrays.copyOfRange(args, 1, args.length));
 		} else if (action.equalsIgnoreCase("combinelabels")) {
 			LabelCombine.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("queryfeature")) {
+			QueryFeatures.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("positivequeries")) {
+			QueriesWithQrel.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("addtext")) {
+			CombineQueryText.main(Arrays.copyOfRange(args, 1, args.length));
 		} else
 			System.out.println("Unknown action " + action);
 	}

@@ -33,7 +33,7 @@ public class BuildIndex {
 
 	public static String[] getStopWords() throws FileNotFoundException {
 		final List<String> words = new ArrayList<>();
-		try (Scanner sc = new Scanner(new File("./nltk_stopwords.txt"))) {
+		try (Scanner sc = new Scanner(new File("/home/coreir/learning2rank/nltk_stopwords.txt"))) {
 			while (sc.hasNextLine()) {
 				final String line = sc.nextLine();
 				if (line == null || line.equals(""))
@@ -41,7 +41,7 @@ public class BuildIndex {
 				words.add(line);
 			}
 		}
-		System.out.println("Loaded " + words.size() + " stop word(s)... " + words);
+		//System.out.println("Loaded " + words.size() + " stop word(s)... " + words);
 		return words.toArray(new String[0]);
 	}
 }

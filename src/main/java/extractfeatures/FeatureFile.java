@@ -27,18 +27,26 @@ public class FeatureFile {
      * 15 f_max_stream_len = 1
      * 16 f_mean_stream_len = 1
      * 17 f_variance_stream_len = 1
+     * 18 query length excluding stopwords
      */
     private static final int NUM_FEATURES = 17;
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.out.println("Please provide 2 file locations: (1) the existing features/output file, " +
                     "(2) the output location/file");
         } else {
+            System.out.println("Loading filesize...");
+            BufferedReader reader = new BufferedReader(new FileReader(args[0]));
+            int lineCount = 0;
+            while (reader.readLine() != null) lineCount++;
+            reader.close();
+
             System.out.println("Loading features...");
             try (BufferedReader br = new BufferedReader(new FileReader(args[0]))) {
                 try (PrintWriter w = new PrintWriter(args[1])) {
                     String line;
+                    int counter = 0;
                     while ((line = br.readLine()) != null) {
                         String[] values = line.split(",");
                         w.print(values[0] + " qid:" + values[1]);
@@ -46,7 +54,11 @@ public class FeatureFile {
                         for (int i = 3; i < NUM_FEATURES+3; i++) {
                             w.print(" " + (i-2) + ":" +  values[i]);
                         }
-                        w.print('\n');
+                        w.print(" #"+values[2]+'\n');
+                        counter++;
+                        if (counter % 10000 == 0) {
+                            System.out.println(counter + "/" + lineCount);
+                        }
                     }
                     System.out.println("Done");
                 }
