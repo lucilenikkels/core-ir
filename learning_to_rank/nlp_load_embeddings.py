@@ -1,5 +1,4 @@
 import numpy as np
-from gensim.scripts.glove2word2vec import glove2word2vec
 from gensim.models import KeyedVectors
 
 
