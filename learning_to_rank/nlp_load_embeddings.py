@@ -15,7 +15,8 @@ def load(filename, dimensions):
                 i += 1
             word = word.strip()
             vector = np.asarray(values[i:], dtype=np.float32)
-            embeddings_dict[word] = vector
+            if len(vector) == 300:
+                embeddings_dict[word] = vector
     print("Loaded.")
     return embeddings_dict
 

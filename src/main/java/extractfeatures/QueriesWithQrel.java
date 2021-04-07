@@ -1,4 +1,4 @@
-package evaluate;
+package extractfeatures;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +17,7 @@ public class QueriesWithQrel {
                 final String line = sc.nextLine();
                 if (line == null || line.equals(""))
                     continue;
-                qrels.add(line.trim());
+                qrels.add(line.split("\t")[0].trim());
             }
         }
         catch(Exception e) {
@@ -28,7 +28,7 @@ public class QueriesWithQrel {
             try (PrintWriter w = new PrintWriter(output)) {
                 String line = br.readLine();
                 while(line != null) {
-                    String queryID = line.split(" ")[1].substring(4);
+                    String queryID = line.split("\t")[0].trim();
 
                     if (qrels.contains(queryID)) {
                         w.println(line);
@@ -52,11 +52,8 @@ public class QueriesWithQrel {
         } else if (args.length == 2) {
             filter(args[0], args[1], "filtered_features.txt");
         } else {
-            System.out.println("Please provide at least 2 arguments: (1) the original feature file and (2) the " +
-                    "file with query ids that have at least 1 positive sample (use command: \n " +
-                    "grep '1 qid' test_features.txt | grep -o -P '(?<=qid:).*(?= 1:)' | sort -u > qrel_test_queries.txt" +
-                    " \n) (and optional: " +
-                    "(3) the output file (default 'filtered_features.txt'))");
+            System.out.println("Please provide at least 2 arguments: (1) the original query file and (2) the " +
+                    "qrel file (and optional: (3) the output file (default 'filtered_queries.tsv'))");
         }
     }
 }

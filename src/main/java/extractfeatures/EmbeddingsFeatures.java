@@ -9,28 +9,23 @@ import java.util.HashMap;
 import java.util.List;
 
 public class EmbeddingsFeatures {
-    private static void qf(String queries, String features, String newFile, boolean rmStopwords) throws IOException {
-        final BufferedReader brQueries = new BufferedReader(new FileReader(queries));
-        List<String> stopWords = null;
-        if (rmStopwords) {
-            System.out.println("Loading stopwords...");
-            stopWords = Arrays.asList(BuildIndex.getStopWords());
-        }
+    private static void qf(String dists, String features, String newFile) throws IOException {
+        final BufferedReader brDists = new BufferedReader(new FileReader(dists));
 
         System.out.println("Loading queries...");
-        HashMap<String, Integer> queryMap = new HashMap<>();
+        HashMap<String, String> featureMap = new HashMap<>();
 
-        String curQuery = brQueries.readLine();
-        while (curQuery != null) {
-            queryMap.put(curQuery.split(";")[0], getFeatureValue(curQuery.split(";")[1], stopWords));
-            curQuery = brQueries.readLine();
+        String lineFt = brDists.readLine();
+        while (lineFt != null) {
+            String[] vals = lineFt.split("\t");
+            featureMap.put(vals[0]+"_"+vals[1], vals[2]);
+            lineFt = brDists.readLine();
         }
-
 
         System.out.println("Loading filesize...");
         BufferedReader reader = new BufferedReader(new FileReader(features));
         int lineCount = 0;
-        while (reader.readLine() != null) lineCount++;
+        while (reader.readLine() != null) lineCount = lineCount+1;
         reader.close();
 
         System.out.println("Starting feature generator...");
@@ -40,8 +35,13 @@ public class EmbeddingsFeatures {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] values = line.split(",");
-                    String qid = values[1];
-                    w.println(line + "," + queryMap.get(qid));
+                    String key = values[1] + "_" + values[2];
+                    String distance = featureMap.get(key);
+                    if (distance != null) {
+                        w.println(line + "," + distance);
+                    } else {
+                        System.out.println("Failed for combination "+key);
+                    }
                     if (i % 10000 == 0) {
                         System.out.println(i + "/" + lineCount);
                     }
@@ -55,33 +55,14 @@ public class EmbeddingsFeatures {
         }
     }
 
-    private static int getFeatureValue(String query, List<String> removeStopWords) throws FileNotFoundException {
-        int wordCount;
-        if (removeStopWords != null) {
-            List<String> stopWords = Arrays.asList(BuildIndex.getStopWords());
-            String[] indivWords = query.split(" ");
-            List<String> res = new ArrayList<>();
-            for (String indivWord : indivWords) {
-                if (!stopWords.contains(indivWord)) {
-                    res.add(indivWord);
-                }
-            }
-            wordCount = res.size();
-        } else {
-            wordCount = query.split(" ").length;
-        }
-        return wordCount;
-    }
-
     public static void main(String[] args) throws IOException {
-        if (args.length == 3) {
-            qf(args[1], args[2], "output_plus_qf.csv", args[0].equals("remove"));
-        } else if (args.length == 4) {
-            qf(args[1], args[2], args[3],args[0].equals("remove"));
+        if (args.length == 2) {
+            qf(args[0], args[1], "output_plus_distance.csv");
+        } else if (args.length == 3) {
+            qf(args[0], args[1], args[2]);
         } else {
-            System.out.println("Please provide at least 3 arguments: (1) remove (or keep) to (not) remove stopwords " +
-                    "in the count,  (2) the (formatted) queries file and (3) the features fxt csv file (Optional: " +
-                    "(3) the output file (default 'output_plus_qf.csv'))");
+            System.out.println("Please provide at least 2 arguments: (1) the distances file and (2) the " +
+                    "features fxt csv file (Optional: (3) the output file (default 'output_plus_distance.csv'))");
         }
     }
 }
