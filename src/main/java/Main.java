@@ -39,6 +39,10 @@ public class Main {
 			QueriesWithQrel.main(Arrays.copyOfRange(args, 1, args.length));
 		} else if (action.equalsIgnoreCase("addtext")) {
 			CombineQueryText.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("filterqueries")) {
+			extractfeatures.QueriesWithQrel.main(Arrays.copyOfRange(args, 1, args.length));
+		} else if (action.equalsIgnoreCase("embeddingsfeatures")) {
+			extractfeatures.EmbeddingsFeatures.main(Arrays.copyOfRange(args, 1, args.length));
 		} else
 			System.out.println("Unknown action " + action);
 	}
