@@ -1,6 +1,5 @@
 import numpy as np
 from scipy import spatial
-from gensim.models import KeyedVectors
 import tqdm
 import os
 import re
